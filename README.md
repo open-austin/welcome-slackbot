@@ -11,8 +11,17 @@ Open Austin currently runs new member orientation and CANs concurrently.  From a
 If we decouple when CANs and new member orientation occur, then we'll lower burden on the OA core team.
 If we create a welcome Slackbot, then new members will have a more scaffolded experience joining OA (which reduces the likeliness of drop-off)
 
+## Development approach
+
+We will develop the Slackbot in an iterative manner: We'll start with the most basic functionality that we think a new member needs, test it during new member orientations, and use those experiences to refine/develop further.
+
 ## (draft) Expected Slackbot behavior
 
-As a new member, I want to:
+MVP functionality - as a new member, I want to:
 * See a full list of project channels so that I can take my time to choose which project to join
 * Be prompted to introduce myself in #general
+
+Potential future functionality:
+* Link to Code of Conduct
+* How to contribute to Open Austin
+* More to come?
