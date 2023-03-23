@@ -24,4 +24,5 @@ MVP functionality - as a new member, I want to:
 Potential future functionality:
 * Link to Code of Conduct
 * How to contribute to Open Austin
-* More to come?
+* Utilizing the GrapghQL data (i.e. OA members could query upcoming event details using a slash command).
+* More to come
