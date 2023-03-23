@@ -18,8 +18,8 @@ We will develop the Slackbot in an iterative manner: We'll start with the most b
 ## (draft) Expected Slackbot behavior
 
 MVP functionality - as a new member, I want to:
-* See a full list of project channels so that I can take my time to choose which project to join
-* Be prompted to introduce myself in #general
+* See a full list of project channels when I first join the Slack, so that I can take my time to choose which project to join
+* Be prompted to introduce myself in #general, so that I start to get acquainted
 
 Potential future functionality:
 * Link to Code of Conduct
