@@ -49,3 +49,11 @@ export const SetupWorkflowForm = MessageSetupWorkflow.addStep(
     message:
       `Your welcome message for this channel was successfully created! :white_check_mark:`,
   });
+
+  MessageSetupWorkflow.addStep(WelcomeMessageSetupFunction, {
+    message: SetupWorkflowForm.outputs.fields.messageInput,
+    channel: SetupWorkflowForm.outputs.fields.channel,
+    author: MessageSetupWorkflow.inputs.interactivity.interactor.id,
+  });
+  
+  export default MessageSetupWorkflow;
