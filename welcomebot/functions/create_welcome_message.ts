@@ -61,3 +61,83 @@ export default SlackFunction(
       return { outputs: {} };
     },
   );
+
+  const triggerResponse = await client.workflows.triggers.create({
+    type: "event",
+    name: "Member joined response",
+    description: "Triggers when member joined",
+    workflow: "#/workflows/send_welcome_message",
+    event: {
+      event_type: "slack#/events/user_joined_channel",
+      channel_ids: [inputs.channel],
+    },
+    inputs: {
+      channel: { value: "{{data.channel_id}}" },
+      triggered_user: { value: "{{data.user_id}}" },
+    },
+  });
+  if (!triggerResponse.ok) {
+    const error = `Failed to create a trigger - ${triggerResponse.error}`;
+    return { error };
+  }
+  return { outputs: {} };
+  
+  /**
+   * findUserJoinedChannelTrigger returns if the user_joined_channel trigger
+   * exists for the "Send Welcome Message" workflow in a channel.
+   */
+  export async function findUserJoinedChannelTrigger(
+    client: SlackAPIClient,
+    channel: string,
+  ): Promise<{ error?: string; exists?: boolean }> {
+    // Collect all existing triggers created by the app
+    const allTriggers = await client.workflows.triggers.list({ is_owner: true });
+    if (!allTriggers.ok) {
+      return { error: allTriggers.error };
+    }
+  
+    // Find user_joined_channel triggers for the "Send Welcome Message"
+    // workflow in the specified channel
+    const joinedTriggers = allTriggers.triggers.filter((trigger) => (
+      trigger.workflow.callback_id ===
+        SendWelcomeMessageWorkflow.definition.callback_id &&
+      trigger.event_type === "slack#/events/user_joined_channel" &&
+      trigger.channel_ids.includes(channel)
+    ));
+  
+    // Return if any matching triggers were found
+    const exists = joinedTriggers.length > 0;
+    return { exists };
+  }
+  
+  /**
+   * saveUserJoinedChannelTrigger creates a new user_joined_channel trigger
+   * for the "Send Welcome Message" workflow in a channel.
+   */
+  export async function saveUserJoinedChannelTrigger(
+    client: SlackAPIClient,
+    channel: string,
+  ): Promise<{ ok: boolean; error?: string }> {
+    const triggerResponse = await client.workflows.triggers.create<
+      typeof SendWelcomeMessageWorkflow.definition
+    >({
+      type: "event",
+      name: "User joined channel",
+      description: "Send a message when a user joins the channel",
+      workflow:
+        `#/workflows/${SendWelcomeMessageWorkflow.definition.callback_id}`,
+      event: {
+        event_type: "slack#/events/user_joined_channel",
+        channel_ids: [channel],
+      },
+      inputs: {
+        channel: { value: channel },
+        triggered_user: { value: "{{data.user_id}}" },
+      },
+    });
+  
+    if (!triggerResponse.ok) {
+      return { ok: false, error: triggerResponse.error };
+    }
+    return { ok: true };
+  }
