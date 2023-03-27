@@ -27,3 +27,37 @@ export const WelcomeMessageSetupFunction = DefineFunction({
     required: ["welcome_message", "channel"],
   },
 });
+export default SlackFunction(
+    WelcomeMessageSetupFunction,
+    async ({ inputs, client }) => {
+      const uuid = crypto.randomUUID();
+      const putResponse = await client.apps.datastore.put<
+      typeof WelcomeMessageDatastore.definition
+      >({
+        datastore: WelcomeMessageDatastore.name,
+        item: { id: uuid, channel, message, author },
+      });
+  
+      if (!putResponse.ok) {
+        return { error: `Failed to save welcome message: ${putResponse.error}`};
+      }
+  
+      // Search for any existing triggers for the welcome workflow
+      const triggers = await findUserJoinedChannelTrigger(client, channel);
+      if (triggers.error) {
+        return { error: `Failed to lookup existing triggers: ${triggers.error}` };
+      }
+  
+      // Create a new user_joined_channel trigger if none exist
+      if (!triggers.exists) {
+        const newTrigger = await saveUserJoinedChannelTrigger(client, channel);
+        if (!newTrigger.ok) {
+          return {
+            error: `Failed to create welcome trigger: ${newTrigger.error}`,
+          };
+        }
+      }
+  
+      return { outputs: {} };
+    },
+  );
