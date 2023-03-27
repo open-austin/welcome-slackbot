@@ -18,3 +18,7 @@ export const SendWelcomeMessageWorkflow = DefineWorkflow({
     required: ["channel", "triggered_user"],
   },
 });
+SendWelcomeMessageWorkflow.addStep(SendWelcomeMessageFunction, {
+    channel: SendWelcomeMessageWorkflow.inputs.channel,
+    triggered_user: SendWelcomeMessageWorkflow.inputs.triggered_user,
+  });
